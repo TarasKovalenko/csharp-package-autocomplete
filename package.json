@@ -1,0 +1,51 @@
+{
+  "name": "csharp-package-autocomplete",
+  "displayName": "C# Package Autocomplete",
+  "description": "Provides autocomplete for #:package directives in C# files",
+  "version": "0.0.1",
+  "publisher": "taraskovalenko",
+  "author": {
+    "name": "Taras Kovalenko",
+    "email": "bad.kto@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TarasKovalenko/csharp-package-autocomplete"
+  },
+  "keywords": ["csharp", "nuget", "autocomplete", "packages", "dotnet"],
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onLanguage:csharp"
+  ],
+  "main": "./out/extension.js",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#512BD4",
+    "theme": "dark"
+  },
+  "contributes": {
+    "languages": [{
+      "id": "csharp",
+      "extensions": [".cs"]
+    }]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "16.x",
+    "typescript": "^4.9.4",
+    "@vscode/vsce": "^2.22.0"
+  },
+  "dependencies": {
+    "axios": "^1.6.0"
+  }
+}
