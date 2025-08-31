@@ -1,8 +1,8 @@
 {
   "name": "csharp-package-autocomplete",
   "displayName": "C# Package Autocomplete",
-  "description": "Provides autocomplete for #:package directives in C# files",
-  "version": "0.0.1",
+  "description": "Provides autocomplete for #:package, #:sdk, #:property directives in C# files",
+  "version": "1.0.0",
   "publisher": "taraskovalenko",
   "author": {
     "name": "Taras Kovalenko",
@@ -12,9 +12,9 @@
     "type": "git",
     "url": "https://github.com/TarasKovalenko/csharp-package-autocomplete"
   },
-  "keywords": ["csharp", "nuget", "autocomplete", "packages", "dotnet"],
+  "keywords": ["csharp", "nuget", "autocomplete", "packages", "dotnet", "sdk"],
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.103.0"
   },
   "categories": ["Other"],
   "activationEvents": [
@@ -40,12 +40,12 @@
     "publish": "vsce publish"
   },
   "devDependencies": {
-    "@types/vscode": "^1.74.0",
-    "@types/node": "16.x",
-    "typescript": "^4.9.4",
-    "@vscode/vsce": "^2.22.0"
+    "@types/vscode": "^1.103.0",
+    "@types/node": "24.x",
+    "typescript": "^5.9.2",
+    "@vscode/vsce": "^3.6.0"
   },
   "dependencies": {
-    "axios": "^1.6.0"
+    "axios": "^1.11.0"
   }
 }
