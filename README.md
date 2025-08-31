@@ -5,7 +5,8 @@
 [![Downloads](https://img.shields.io/visual-studio-marketplace/d/taraskovalenko.csharp-package-autocomplete)](https://marketplace.visualstudio.com/items?itemName=taraskovalenko.csharp-package-autocomplete)
 [![Rating](https://img.shields.io/visual-studio-marketplace/r/taraskovalenko.csharp-package-autocomplete)](https://marketplace.visualstudio.com/items?itemName=taraskovalenko.csharp-package-autocomplete)
 
-Supercharge your C# top-level programs with intelligent NuGet package autocomplete! This extension provides seamless autocomplete for `#:package` directives, making it effortless to add and manage NuGet packages in your C# scripts.
+Supercharge your C# top-level programs with intelligent NuGet package autocomplete! This extension provides seamless autocomplete for `#:package`, `#:sdk`, `#:property` directives.
+Complete IntelliSense support for .NET 10 file-based app directives in Visual Studio Code. Build and run `C#` applications directly from single `.cs` files with full autocomplete for packages, SDKs, and MSBuild properties.
 
 ![alt text](image.png)
 
@@ -24,90 +25,201 @@ To learn more about the war and how you can help, [click here](https://war.ukrai
 
 ## ✨ Features
 
-### 🔍 **Smart Package Search**
+### 📦 **Package Management (`#:package`)**
 - Type `#:package` and get instant autocomplete suggestions from the official NuGet repository
 - Intelligent search with fuzzy matching for package names
 - Real-time package information with descriptions and download statistics
+- Version management with `@` syntax for easy version selection
+- Shows latest stable versions first (excludes pre-release by default)
 
-### 🏷️ **Version Management**
-- Type `@` after a package name to get version suggestions
-- Shows latest stable versions first (excludes pre-release)
-- Easy selection from available version history
+### 🛠️ **SDK Selection (`#:sdk`)**
+- Full autocomplete for .NET SDKs including:
+  - `Microsoft.NET.Sdk` - Console applications and class libraries
+  - `Microsoft.NET.Sdk.Web` - ASP.NET Core applications and Web APIs
+  - `Microsoft.NET.Sdk.Worker` - Background services and hosted services
+  - `Microsoft.NET.Sdk.WindowsDesktop` - WPF and Windows Forms applications
+  - `Microsoft.NET.Sdk.Razor` - Razor class libraries and components
+  - `Microsoft.NET.Sdk.BlazorWebAssembly` - Blazor WebAssembly applications
+- Rich documentation with SDK descriptions and default target frameworks
 
-### 📖 **Rich Documentation**
-- Hover over any package to see detailed information
+### ⚙️ **MSBuild Properties (`#:property`)**
+- Intelligent autocomplete for common MSBuild properties:
+  - **LangVersion** - C# language version (`latest`, `preview`, `12`, `11`, etc.)
+  - **TargetFramework** - Target framework (`net10.0`, `net9.0`, `net8.0`, etc.)
+  - **Nullable** - Nullable reference types (`enable`, `disable`, `warnings`, `annotations`)
+  - **ImplicitUsings** - Implicit using statements (`enable`, `disable`)
+  - **PublishAot** - Ahead-of-time compilation (`true`, `false`)
+  - **TreatWarningsAsErrors** - Compiler warning handling
+  - **WarningLevel** - Compiler warning levels (0-5)
+  - And many more...
+- Context-aware value suggestions with default values and descriptions
+
+### 📖 **Rich Documentation & Hover Support**
+- Comprehensive hover information for all directive types
 - Package descriptions, download counts, and direct links to NuGet
-- Visual indicators for package popularity
+- SDK explanations with use cases and target frameworks
+- Property documentation with possible values and defaults
+- Visual indicators for package popularity and property defaults
 
 ### ⚡ **Performance Optimized**
 - Intelligent caching reduces API calls and improves response time
 - Non-blocking searches don't interrupt your coding flow
-- Minimal resource usage
+- Minimal resource usage with smart request batching
 
 ## 🚀 Getting Started
 
 ### Installation
 
-1. Open VS Code
-2. Go to Extensions (`Ctrl+Shift+X`)
-3. Search for "C# Package Autocomplete"
-4. Click "Install"
+1. Install **.NET 10 Preview 4** or later from [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/10.0)
+2. Open **Visual Studio Code**
+3. Go to Extensions (`Ctrl+Shift+X`)
+4. Search for "C# File-Based App Directive Support"
+5. Click "Install"
 
 ### Usage
 
 1. **Create a C# file** with `.cs` extension
-2. **Type the package directive**:
+2. **Type any directive** and get autocomplete:
    ```csharp
-   #:package 
+   #:package Humanizer@2.14.1
+   #:sdk Microsoft.NET.Sdk.Web
+   #:property LangVersion preview
    ```
-3. **Start typing a package name** and see autocomplete suggestions
-4. **Add version** by typing `@` after the package name
-5. **Run your script** with the new .NET CLI
+3. **Start typing** and see intelligent suggestions
+4. **Run your script** with `dotnet run yourfile.cs`
 
 ## 📝 Examples
 
-### Basic Usage
+### Console Application with NuGet Package
 ```csharp
 #:package Humanizer@2.14.1
 
 using Humanizer;
 
-var dotNet9Released = DateTimeOffset.Parse("2024-12-03");
-var since = DateTimeOffset.Now - dotNet9Released;
+var dotNet10Released = DateTimeOffset.Parse("2025-11-01");
+var since = DateTimeOffset.Now - dotNet10Released;
 
-Console.WriteLine($"It has been {since.Humanize()} since .NET 9 was released.");
+Console.WriteLine($"It has been {since.Humanize()} since .NET 10 was released.");
 ```
 
-### Multiple Packages
+### ASP.NET Core Web API
 ```csharp
-#:package Newtonsoft.Json@13.0.3
-#:package Serilog@3.1.1
-#:package FluentValidation@11.8.0
+#:sdk Microsoft.NET.Sdk.Web
+#:package Microsoft.AspNetCore.OpenApi@10.*-*
+#:property LangVersion preview
 
-using Newtonsoft.Json;
-using Serilog;
+var builder = WebApplication.CreateBuilder();
+builder.Services.AddOpenApi();
+
+var app = builder.Build();
+app.MapOpenApi();
+
+app.MapGet("/", () => "Hello, World from .NET 10!");
+app.MapGet("/time", () => new { Time = DateTime.Now, Message = "Current server time" });
+
+app.Run();
+```
+
+### Background Worker Service
+```csharp
+#:sdk Microsoft.NET.Sdk.Worker
+#:package Microsoft.Extensions.Hosting@8.0.1
+
+var builder = Host.CreateApplicationBuilder(args);
+builder.Services.AddHostedService<WorkerService>();
+
+var host = builder.Build();
+await host.RunAsync();
+
+public class WorkerService : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            Console.WriteLine($"Worker running at: {DateTimeOffset.Now}");
+            await Task.Delay(1000, stoppingToken);
+        }
+    }
+}
+```
+
+### Advanced Configuration
+```csharp
+#:sdk Microsoft.NET.Sdk.Web
+#:package FluentValidation@*
+#:package FluentValidation.DependencyInjectionExtensions@*
+#:package Serilog.AspNetCore@8.0.0
+#:property LangVersion preview
+#:property Nullable enable
+#:property TreatWarningsAsErrors true
+#:property EnablePreviewFeatures true
+
 using FluentValidation;
+using Serilog;
 
-// Your code here...
-```
-
-### Web API Example
-```csharp
-#:package Microsoft.AspNetCore.App@8.0.0
-#:package Swashbuckle.AspNetCore@6.5.0
+// Modern C# with preview features enabled
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.MapPost("/user", async (CreateUserRequest request, IValidator<CreateUserRequest> validator) =>
+{
+    var result = await validator.ValidateAsync(request);
+    return result.IsValid ? Results.Ok("User created") : Results.BadRequest(result.Errors);
+});
+
 app.Run();
+
+public record CreateUserRequest(string Name, string Email);
+
+public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
+{
+    public CreateUserRequestValidator()
+    {
+        RuleFor(x => x.Name).NotEmpty().MaximumLength(100);
+        RuleFor(x => x.Email).NotEmpty().EmailAddress();
+    }
+}
+```
+
+## 🎯 Directive Reference
+
+### `#:package` - NuGet Package References
+```csharp
+#:package PackageName@Version
+#:package Newtonsoft.Json@13.0.3
+#:package Microsoft.Extensions.Hosting@8.*
+```
+
+### `#:sdk` - SDK Selection
+```csharp
+#:sdk Microsoft.NET.Sdk              // Console/Library (default)
+#:sdk Microsoft.NET.Sdk.Web          // ASP.NET Core
+#:sdk Microsoft.NET.Sdk.Worker       // Background Services
+#:sdk Microsoft.NET.Sdk.WindowsDesktop  // WPF/WinForms
+```
+
+### `#:property` - MSBuild Properties
+```csharp
+#:property LangVersion preview        // C# language version
+#:property TargetFramework net10.0    // Target framework
+#:property Nullable enable            // Nullable reference types
+#:property ImplicitUsings enable      // Implicit usings
+#:property PublishAot true           // AOT compilation
 ```
 
 ## ⚙️ Configuration
 
 No configuration needed! The extension works out of the box with sensible defaults.
 
-### Settings (Optional)
+### Optional Settings
 
 Future versions may include these customizable settings:
 
@@ -115,27 +227,42 @@ Future versions may include these customizable settings:
 - Number of suggestions to display
 - Include/exclude pre-release packages
 - Custom package source URLs
+- Additional MSBuild properties
 
 ## 🔧 Requirements
 
-- **Visual Studio Code** 1.74.0 or higher
+- **Visual Studio Code** 1.103.0 or higher
+- **.NET 10 Preview 4** or later with file-based app support
+- **C# Dev Kit extension** (recommended) for best experience
 - **Internet connection** for package search (cached results work offline)
-- **.NET SDK** with top-level program support
+
+### VS Code Setup for File-Based Apps
+
+1. Install the **C# Dev Kit** extension
+2. Switch to **Pre-Release version** of the C# extension (version 2.79.8+)
+3. Ensure you have **.NET 10 Preview 4** installed
 
 ## 🐛 Known Issues
 
 - **Network dependency**: Requires internet connection for initial package searches
 - **API rate limits**: Heavy usage might temporarily reduce suggestion speed
 - **Case sensitivity**: Package names are case-sensitive in NuGet
+- **SDK validation**: Some custom SDKs may not be recognized for autocomplete
 
 ## 📋 Roadmap
 
-- [ ] **Custom package sources** - Support for private NuGet feeds
-- [ ] **Dependency visualization** - Show package dependencies
+### Short Term
+- [ ] **Custom package sources** - Support for private NuGet feeds and Azure Artifacts
+- [ ] **Enhanced property validation** - Real-time validation of property values
+- [ ] **Project conversion hints** - Suggestions for converting to full projects
+
+### Long Term
+- [ ] **Dependency visualization** - Show package dependency trees
 - [ ] **Version comparison** - Compare versions with changelogs
 - [ ] **Package templates** - Quick scaffolding for common scenarios
-- [ ] **Offline mode** - Offline package suggestions
-- [ ] **IntelliSense integration** - Enhanced code completion for imported packages
+- [ ] **Offline mode** - Enhanced offline package suggestions
+- [ ] **Multi-file support** - Support for file-based apps with multiple files
+- [ ] **Debug support** - Enhanced debugging experience for file-based apps
 
 ## 🤝 Contributing
 
@@ -145,12 +272,13 @@ We welcome contributions! Here's how you can help:
 2. **Request features** through GitHub discussions
 3. **Submit pull requests** for bug fixes or new features
 4. **Share feedback** and rate the extension
+5. **Add SDK or property definitions** for better autocomplete coverage
 
 ### Development Setup
 
 ```bash
 # Clone the repository
-git clone https://github.com/TarasKovalenko/csharp-package-autocomplete
+git clone https://github.com/TarasKovalenko/csharp-filebased-directive-support
 
 # Install dependencies
 npm ci
@@ -158,8 +286,28 @@ npm ci
 # Compile TypeScript
 npm run compile
 
+# Run tests
+npm test
+
 # Package extension
 npm run package
+```
+
+### Testing File-Based Apps
+
+Create test files and run them:
+
+```bash
+# Create a test file
+echo '#:package Humanizer@2.14.1
+using Humanizer;
+Console.WriteLine("Hello".Humanize());' > test.cs
+
+# Run with .NET 10
+dotnet run test.cs
+
+# Convert to project when ready
+dotnet project convert test.cs
 ```
 
 ## 📄 License
@@ -173,16 +321,25 @@ If you find this extension helpful:
 - ⭐ **Star the repository** on GitHub
 - 📝 **Leave a review** on the VS Code Marketplace
 - 🐦 **Share it** with your fellow developers
+- 💬 **Join discussions** about .NET 10 file-based apps
 
 ## 🙏 Acknowledgments
 
-- **Microsoft** for the amazing .NET ecosystem and top-level programs feature
+- **Microsoft .NET Team** for the innovative file-based apps feature in .NET 10
 - **NuGet team** for the comprehensive package API
 - **VS Code team** for the excellent extension platform
-- **Community** for feedback and contributions
+- **C# Dev Kit team** for the enhanced C# experience
+- **Community** for feedback, bug reports, and feature requests
 
 ---
 
-**Happy coding with C# and NuGet packages!** 🚀
+**Transform your C# development with single-file simplicity!** 🚀
 
 *Made with ❤️ for the .NET community*
+
+## 🔗 Related Links
+
+- [.NET 10 File-Based Apps Documentation](https://docs.microsoft.com/en-us/dotnet/core/tutorials/file-based-apps)
+- [.NET 10 Preview Downloads](https://dotnet.microsoft.com/download/dotnet/10.0)
+- [C# Dev Kit Extension](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit)
+- [MSBuild Property Reference](https://docs.microsoft.com/en-us/dotnet/core/project-sdk/msbuild-props)
