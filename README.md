@@ -73,7 +73,7 @@ To learn more about the war and how you can help, [click here](https://war.ukrai
 1. Install **.NET 10 Preview 4** or later from [dotnet.microsoft.com](https://dotnet.microsoft.com/download/dotnet/10.0)
 2. Open **Visual Studio Code**
 3. Go to Extensions (`Ctrl+Shift+X`)
-4. Search for "C# File-Based App Directive Support"
+4. Search for "C# Package Autocomplete"
 5. Click "Install"
 
 ### Usage
